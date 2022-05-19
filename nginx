@@ -1,0 +1,37 @@
+server {
+        listen 80;
+        server_name x.x.x.x;
+return 301 http://x.x.x.x:z.z.z.z$request_uri;
+}
+
+
+server {
+listen z.z.z.z;
+index index.php index.html;
+
+server_name x.x.x.x;
+
+location / {
+
+
+proxy_set_header Accept-Encoding "";
+proxy_set_header Host $proxy_host;
+proxy_pass http://y.y.y.y;
+proxy_set_header X-Real-Ip $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-real-ids-host $host:$server_port;
+proxy_set_header X-real-host $host:$server_port;
+
+sub_filter '$proxy_host' '$host:$server_port';
+sub_filter 'http://$proxy_host' 'https://$host:$server_port';
+sub_filter 'https://$proxy_host' 'https://$host:$server_port';
+sub_filter_once off;
+}
+
+}
+
+
+# keterangan
+# x.x.x.x = ip proxy
+# z.z.z.z = port yg digunakan proxy
+# y.y.y.y = domain tujuan yang akan di proxy
